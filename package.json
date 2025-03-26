@@ -7,15 +7,26 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "detox test -c ios.sim.debug",
+    "build:e2e": "detox build -c ios.sim.debug"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
-    "@react-navigation/native": "^7.0.18",
-    "@react-navigation/native-stack": "^7.3.2",
+    "@react-navigation/bottom-tabs": "^7.3.3",
+    "@react-navigation/native": "^7.0.19",
+    "@react-navigation/native-stack": "^7.3.3",
     "axios": "^1.8.4",
+    "date-fns": "^4.1.0",
     "react": "19.0.0",
-    "react-native": "0.78.1"
+    "react-native": "0.78.1",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-safe-area-context": "^5.3.0",
+    "react-native-screens": "^4.9.2",
+    "react-native-svg": "^15.11.2",
+    "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -28,16 +39,33 @@
     "@react-native/eslint-config": "0.78.1",
     "@react-native/metro-config": "0.78.1",
     "@react-native/typescript-config": "0.78.1",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.0.0",
+    "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-test-renderer": "^19.0.0",
+    "detox": "^20.36.1",
     "eslint": "^8.19.0",
-    "jest": "^29.6.3",
+    "jest": "^29.7.0",
     "prettier": "2.8.8",
     "react-test-renderer": "19.0.0",
     "typescript": "5.0.4"
   },
   "engines": {
     "node": ">=18"
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/JournalApp.app",
+        "build": "xcodebuild -workspace ios/YourApp.xcworkspace -scheme YourApp -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "device": {
+          "type": "iPhone 12"
+        }
+      }
+    },
+    "test-runner": "jest"
   }
 }

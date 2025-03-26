@@ -1,38 +1,47 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
+  FlatList,
+  RefreshControl,
 } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
+import { useJournal } from '../../context/JournalContext';
+import { JournalEntryCard } from '../../components/journal/JournalEntryCard';
+import { FAB } from '../../components/common/FAB';
+import { useNavigation } from '@react-navigation/native';
 
 export const HomeScreen = () => {
-  const { logout } = useAuth();
+  const { entries, isLoading, refreshEntries } = useJournal();
+  const navigation = useNavigation();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+  useEffect(() => {
+    refreshEntries();
+  }, [refreshEntries]);
+
+  const handleEditEntry = (entry) => {
+    navigation.navigate('EditEntry', { entry });
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome to Journal App</Text>
-        <Text style={styles.subtitle}>You are logged in!</Text>
-        
-        <TouchableOpacity 
-          style={styles.logoutButton} 
-          onPress={handleLogout}
-        >
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <FlatList
+        data={entries}
+        renderItem={({ item }) => (
+          <JournalEntryCard 
+            entry={item}
+            onPress={() => handleEditEntry(item)}
+          />
+        )}
+        keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={refreshEntries} />
+        }
+      />
+      <FAB
+        icon="plus"
+        onPress={() => navigation.navigate('NewEntry')}
+      />
+    </View>
   );
 };
 
@@ -40,34 +49,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 30,
-  },
-  logoutButton: {
-    backgroundColor: '#ff4444',
-    padding: 15,
-    borderRadius: 5,
-    width: '100%',
-    alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 
